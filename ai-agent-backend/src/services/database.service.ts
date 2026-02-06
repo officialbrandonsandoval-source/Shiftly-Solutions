@@ -100,6 +100,11 @@ export class DatabaseService {
     return result.rows[0] || null;
   }
 
+  async getDealershipByPhone(phone: string): Promise<any> {
+    const result = await query('SELECT * FROM dealerships WHERE phone = $1 AND active = true', [phone]);
+    return result.rows[0] || null;
+  }
+
   async getDefaultDealership(): Promise<any> {
     const result = await query('SELECT * FROM dealerships WHERE active = true ORDER BY created_at LIMIT 1');
     return result.rows[0] || null;

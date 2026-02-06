@@ -16,6 +16,11 @@ export function validateTwilioWebhook(req: Request, res: Response, next: NextFun
     return res.status(403).json({ error: 'Missing signature' });
   }
 
+  if (!env.TWILIO_AUTH_TOKEN) {
+    logger.warn('Twilio auth token not configured');
+    return res.status(503).json({ error: 'Twilio not configured' });
+  }
+
   const url = `${env.WEBHOOK_BASE_URL}${req.originalUrl}`;
   const valid = twilio.validateRequest(env.TWILIO_AUTH_TOKEN, signature, url, req.body);
 

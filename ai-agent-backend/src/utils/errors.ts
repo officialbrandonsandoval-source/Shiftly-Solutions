@@ -27,3 +27,15 @@ export class ValidationError extends AppError {
     Object.setPrototypeOf(this, ValidationError.prototype);
   }
 }
+
+export class SMSError extends AppError {
+  constructor(
+    public provider: string,
+    public operation: string,
+    public originalError: Error,
+    public retryable: boolean = true
+  ) {
+    super(502, `SMS provider error: ${provider}.${operation}`, true);
+    Object.setPrototypeOf(this, SMSError.prototype);
+  }
+}

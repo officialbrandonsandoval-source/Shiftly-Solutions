@@ -17,6 +17,7 @@
   "type": "commonjs",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.73.0",
+    "@bandwidth/messaging": "^3.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^4.18.2",

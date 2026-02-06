@@ -17,8 +17,9 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 
-// Twilio sends form-encoded data
+// Webhooks (Twilio form-encoded + Bandwidth JSON)
 app.use('/webhook', express.urlencoded({ extended: false }));
+app.use('/webhook', express.json());
 // API routes use JSON
 app.use(express.json());
 
