@@ -24,6 +24,7 @@ const envSchema = z.object({
   GHL_API_KEY: optionalString,
   GHL_LOCATION_ID: optionalString,
   GHL_CALENDAR_ID: optionalString,
+  API_KEYS: z.string().optional().default('dev-key-12345'),
   SENTRY_DSN: z.string().optional(),
   WEBHOOK_BASE_URL: z.string().default('http://localhost:3000'),
 });

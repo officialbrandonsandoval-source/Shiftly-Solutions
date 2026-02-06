@@ -1,4 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
+import { env } from '../config/env';
+
+let validKeys: Set<string> | null = null;
+
+function getValidKeys(): Set<string> {
+  if (!validKeys) {
+    const raw = env.API_KEYS || '';
+    validKeys = new Set(
+      raw
+        .split(',')
+        .map((k) => k.trim())
+        .filter((k) => k.length > 0)
+    );
+  }
+  return validKeys;
+}
 
 export function apiKeyAuth(req: Request, res: Response, next: NextFunction) {
   // Skip auth for webhooks (Twilio validates its own signature)
@@ -14,12 +30,12 @@ export function apiKeyAuth(req: Request, res: Response, next: NextFunction) {
   const apiKey = req.headers['x-api-key'] as string;
 
   if (!apiKey) {
-    return res.status(401).json({ error: 'Missing API key' });
+    return res.status(401).json({ success: false, error: 'Missing API key' });
   }
 
-  // For now, simple key validation. Will upgrade to JWT in Phase 3.
-  if (apiKey !== process.env.API_KEY) {
-    return res.status(403).json({ error: 'Invalid API key' });
+  const keys = getValidKeys();
+  if (keys.size === 0 || !keys.has(apiKey)) {
+    return res.status(403).json({ success: false, error: 'Invalid API key' });
   }
 
   next();
