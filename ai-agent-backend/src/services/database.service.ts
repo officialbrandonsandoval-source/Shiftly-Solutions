@@ -109,4 +109,45 @@ export class DatabaseService {
     const result = await query('SELECT * FROM dealerships WHERE active = true ORDER BY created_at LIMIT 1');
     return result.rows[0] || null;
   }
+
+  async upsertCustomerContext(
+    conversationId: string,
+    contextType: string,
+    contextValue: Record<string, unknown>,
+    confidence: number
+  ): Promise<void> {
+    const existing = await query(
+      `SELECT id FROM customer_context WHERE conversation_id = $1 AND context_type = $2`,
+      [conversationId, contextType]
+    );
+
+    if (existing.rows.length > 0) {
+      await query(
+        `UPDATE customer_context SET context_value = $1, confidence = $2, updated_at = NOW()
+         WHERE conversation_id = $3 AND context_type = $4`,
+        [JSON.stringify(contextValue), confidence, conversationId, contextType]
+      );
+    } else {
+      await query(
+        `INSERT INTO customer_context (id, conversation_id, context_type, context_value, confidence)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [uuidv4(), conversationId, contextType, JSON.stringify(contextValue), confidence]
+      );
+    }
+  }
+
+  async getCustomerContext(conversationId: string): Promise<CustomerContext[]> {
+    const result = await query(
+      `SELECT * FROM customer_context WHERE conversation_id = $1 ORDER BY updated_at DESC`,
+      [conversationId]
+    );
+    return result.rows;
+  }
+
+  async updateConversationStatus(conversationId: string, status: 'active' | 'escalated' | 'closed'): Promise<void> {
+    await query(
+      `UPDATE conversations SET status = $1, updated_at = NOW() WHERE id = $2`,
+      [status, conversationId]
+    );
+  }
 }
