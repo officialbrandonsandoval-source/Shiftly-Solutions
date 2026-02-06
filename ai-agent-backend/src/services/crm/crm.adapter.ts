@@ -1,11 +1,11 @@
 import { CRMAdapter, CRMConfig } from '../../types/crm';
+import { GoHighLevelAdapter } from './ghl.adapter';
 
 export class CRMFactory {
   static create(crmType: string, config: CRMConfig): CRMAdapter {
     switch (crmType) {
       case 'gohighlevel':
-        // Will be implemented in Week 4
-        throw new Error('GoHighLevel adapter not yet implemented');
+        return new GoHighLevelAdapter(config);
       default:
         throw new Error(`Unsupported CRM type: ${crmType}`);
     }

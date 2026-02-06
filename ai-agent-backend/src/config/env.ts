@@ -21,6 +21,9 @@ const envSchema = z.object({
   BANDWIDTH_API_TOKEN: optionalString,
   BANDWIDTH_API_SECRET: optionalString,
   BANDWIDTH_APPLICATION_ID: optionalString,
+  GHL_API_KEY: optionalString,
+  GHL_LOCATION_ID: optionalString,
+  GHL_CALENDAR_ID: optionalString,
   SENTRY_DSN: z.string().optional(),
   WEBHOOK_BASE_URL: z.string().default('http://localhost:3000'),
 });
