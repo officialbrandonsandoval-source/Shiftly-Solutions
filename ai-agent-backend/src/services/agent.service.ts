@@ -1,17 +1,17 @@
 import { DatabaseService } from './database.service';
-import { OpenAIService } from './openai.service';
+import { AnthropicService } from './anthropic.service';
 import { TwilioService } from './twilio.service';
 import { AgentResponse, IncomingMessage } from '../types/agent';
 import { logger } from '../utils/logger';
 
 export class AgentService {
   private db: DatabaseService;
-  private openai: OpenAIService;
+  private openai: AnthropicService;
   private twilio: TwilioService;
 
   constructor() {
     this.db = new DatabaseService();
-    this.openai = new OpenAIService();
+    this.openai = new AnthropicService();
     this.twilio = new TwilioService();
   }
 
@@ -28,13 +28,13 @@ export class AgentService {
       // 3. Get conversation history
       const messages = await this.db.getMessages(conversation.id);
 
-      // 4. Generate response via OpenAI
+      // 4. Generate response via Anthropic
       const { content: responseText, tokensUsed } = await this.openai.generateResponse(messages);
 
       // 5. Log agent response
       await this.db.addMessage(conversation.id, 'agent', responseText, {
         tokens_used: tokensUsed,
-        model_version: 'gpt-4-turbo-preview',
+        model_version: 'claude-3-5-haiku-latest',
         channel,
       });
 

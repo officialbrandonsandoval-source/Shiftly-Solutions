@@ -1,21 +1,22 @@
-import { OpenAIService } from '../src/services/openai.service';
+import { AnthropicService } from '../src/services/anthropic.service';
 
-// We'll mock OpenAI for unit tests
-jest.mock('openai', () => {
-  return jest.fn().mockImplementation(() => ({
-    chat: {
-      completions: {
+// We'll mock Anthropic for unit tests
+jest.mock('@anthropic-ai/sdk', () => {
+  return {
+    __esModule: true,
+    default: jest.fn().mockImplementation(() => ({
+      messages: {
         create: jest.fn().mockResolvedValue({
-          choices: [{ message: { content: 'Test response from agent' } }],
-          usage: { prompt_tokens: 50, completion_tokens: 20 },
+          content: [{ type: 'text', text: 'Test response from agent' }],
+          usage: { input_tokens: 50, output_tokens: 20 },
         }),
       },
-    },
-  }));
+    })),
+  };
 });
 
-describe('OpenAIService', () => {
-  const service = new OpenAIService();
+describe('AnthropicService', () => {
+  const service = new AnthropicService();
 
   it('should generate a response', async () => {
     const messages = [
@@ -27,7 +28,7 @@ describe('OpenAIService', () => {
     expect(result.content.length).toBeGreaterThan(0);
   });
 
-  it('should return fallback for price questions when OpenAI fails', () => {
+  it('should return fallback for price questions when Anthropic fails', () => {
     const messages = [
       { id: '1', conversation_id: '1', role: 'customer' as const, content: 'How much does it cost?', metadata: null, created_at: new Date().toISOString() },
     ];
@@ -37,7 +38,7 @@ describe('OpenAIService', () => {
     expect(fallback).toContain('pricing');
   });
 
-  it('should return fallback for test drive questions when OpenAI fails', () => {
+  it('should return fallback for test drive questions when Anthropic fails', () => {
     const messages = [
       { id: '1', conversation_id: '1', role: 'customer' as const, content: 'Can I schedule a test drive?', metadata: null, created_at: new Date().toISOString() },
     ];

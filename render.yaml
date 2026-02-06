@@ -32,7 +32,7 @@ services:
           type: redis
           name: shiftly-redis
           property: connectionString
-      - key: OPENAI_API_KEY
+      - key: ANTHROPIC_API_KEY
         sync: false
       - key: TWILIO_ACCOUNT_SID
         sync: false
