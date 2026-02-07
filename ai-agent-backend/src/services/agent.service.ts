@@ -5,6 +5,7 @@ import { QualificationService } from './qualification.service';
 import { ContextExtractionService, ExtractedContext } from './context.service';
 import { EscalationService } from './escalation.service';
 import { AgentResponse, IncomingMessage } from '../types/agent';
+import { crmSyncQueue } from '../config/queue';
 import { logger } from '../utils/logger';
 
 export class AgentService {
@@ -30,6 +31,22 @@ export class AgentService {
     try {
       // 1. Find or create conversation
       const conversation = await this.db.findOrCreateConversation(customer_phone, dealership_id);
+
+      // 1b. Enqueue CRM sync (async, non-blocking)
+      crmSyncQueue.add(
+        'sync-contact',
+        {
+          conversation_id: conversation.id,
+          customer_phone,
+          dealership_id,
+        },
+        { jobId: `crm-sync-${conversation.id}` }
+      ).catch((err) => {
+        logger.warn('Failed to enqueue CRM sync', {
+          error: err.message,
+          conversation_id: conversation.id,
+        });
+      });
 
       // 2. Log incoming message
       await this.db.addMessage(conversation.id, 'customer', message);
