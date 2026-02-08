@@ -4,7 +4,7 @@ export interface Conversation {
   dealership_id: string;
   created_at: string;
   updated_at: string;
-  status: 'active' | 'escalated' | 'closed';
+  status: 'active' | 'escalated' | 'closed' | 'human_active';
   qualification_score: number | null;
   last_message_at: string | null;
 }

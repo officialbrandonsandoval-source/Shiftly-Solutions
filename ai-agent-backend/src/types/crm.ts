@@ -35,4 +35,5 @@ export interface CRMAdapter {
   updateContact(crmContactId: string, updates: Partial<ContactData>): Promise<void>;
   logInteraction(crmContactId: string, interaction: InteractionLog): Promise<void>;
   bookAppointment(crmContactId: string, appointment: AppointmentData): Promise<string>;
+  findContact(phone: string): Promise<string | null>;
 }

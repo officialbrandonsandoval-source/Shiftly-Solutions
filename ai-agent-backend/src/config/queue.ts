@@ -85,3 +85,12 @@ notificationQueue.on('error', (err) => {
 analyticsQueue.on('error', (err) => {
   logger.error('Analytics queue error', { error: err.message });
 });
+
+export async function closeQueues(): Promise<void> {
+  await Promise.all([
+    crmSyncQueue.close(),
+    testDriveBookQueue.close(),
+    notificationQueue.close(),
+    analyticsQueue.close(),
+  ]);
+}

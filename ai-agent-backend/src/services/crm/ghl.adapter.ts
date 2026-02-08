@@ -152,4 +152,21 @@ export class GoHighLevelAdapter implements CRMAdapter {
     logger.info('GHL appointment booked', { appointmentId: result.id, crmContactId });
     return result.id;
   }
+
+  async findContact(phone: string): Promise<string | null> {
+    try {
+      const result = await this.request<{ contacts: Array<{ id: string }> }>(
+        'GET',
+        `/contacts/?locationId=${this.locationId}&query=${encodeURIComponent(phone)}`
+      );
+
+      if (result.contacts && result.contacts.length > 0) {
+        return result.contacts[0].id;
+      }
+      return null;
+    } catch (error: any) {
+      logger.warn('GHL findContact failed', { phone, error: error.message });
+      return null;
+    }
+  }
 }
