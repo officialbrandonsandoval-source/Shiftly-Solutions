@@ -1,5 +1,17 @@
 import { AnthropicService } from '../src/services/anthropic.service';
 
+// Mock env before any imports that depend on it
+jest.mock('../src/config/env', () => ({
+  env: {
+    PORT: '3000',
+    NODE_ENV: 'test',
+    DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
+    REDIS_URL: 'redis://localhost:6379',
+    ANTHROPIC_API_KEY: 'test-key',
+    WEBHOOK_BASE_URL: 'http://localhost:3000',
+  },
+}));
+
 // We'll mock Anthropic for unit tests
 jest.mock('@anthropic-ai/sdk', () => {
   return {

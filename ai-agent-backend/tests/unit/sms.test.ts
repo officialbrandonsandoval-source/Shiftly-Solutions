@@ -18,6 +18,17 @@ jest.mock('@bandwidth/messaging', () => {
   };
 });
 
+jest.mock('../../src/config/env', () => ({
+  env: {
+    PORT: '3000',
+    NODE_ENV: 'test',
+    DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
+    REDIS_URL: 'redis://localhost:6379',
+    ANTHROPIC_API_KEY: 'test-key',
+    WEBHOOK_BASE_URL: 'http://localhost:3000',
+  },
+}));
+
 jest.mock('../../src/services/database.service', () => {
   return {
     DatabaseService: jest.fn().mockImplementation(() => ({
